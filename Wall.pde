@@ -11,7 +11,7 @@ class Wall {
 
   void draw() {
     if (isDestructible) {
-      fill(255, 0, 0); // Red for destructible
+      fill(0); // Red for destructible
     } else {
       fill(100);       // Gray for solid walls
     }

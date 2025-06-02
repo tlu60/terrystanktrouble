@@ -10,19 +10,7 @@ class PowerUp {
     this.isActive = false;
   }
 
-  void apply(Tank tank) {
-    // Apply the effect based on type
-    switch(type) {
-      case FASTER:
-        tank.speed += 1;
-        break;
-      case EXTRA_BOUNCE:
-        tank.ammo += 1;
-        break;
-      // Add other cases
-    }
-    isActive = true;
-  }
+
 
   void update() {
     if (isActive) {

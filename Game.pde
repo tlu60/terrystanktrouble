@@ -1,4 +1,5 @@
 boolean gameStarted = false;
+boolean gameEnded = false;
 GameMap map;
 
 void setup() {
@@ -9,7 +10,7 @@ void setup() {
 }
 
 void draw() {
-  background(0);
+  background(255);
 
   if (!gameStarted) {
     drawStartScreen();
@@ -20,16 +21,18 @@ void draw() {
 }
 
 void drawStartScreen() {
-  fill(255);
-  text("🚀 Tank Trouble Battle 🚀", width / 2, height / 2 - 60);
+  fill(30,30,30);
+  text("Terry's Tank Trouble", width / 2, height / 2 - 60);
   text("Player 1: WASD to move, 1 to shoot", width / 2, height / 2 - 20);
   text("Player 2: Arrow keys to move, P to shoot", width / 2, height / 2 + 20);
   text("Press SPACE to start", width / 2, height / 2 + 80);
 }
 
+  
 void keyPressed() {
   if (!gameStarted && key == ' ') {
     gameStarted = true;
   }
   // Add tank controls here later
+  
 }
