@@ -54,7 +54,7 @@ void draw() {
 void drawStartScreen() {
   fill(255);
   textSize(24);
-  text("🚀 Tank Trouble Battle 🚀", width / 2, height / 2 - 60);
+  text("Terry's Tank Trouble Battle", width / 2, height / 2 - 60);
   text("Player 1: WASD + 1 to shoot", width / 2, height / 2 - 20);
   text("Player 2: Arrows + P to shoot", width / 2, height / 2 + 20);
   text("Press SPACE to start", width / 2, height / 2 + 80);
