@@ -25,36 +25,46 @@ void draw() {
     drawEndScreen();
   } else {
     map.draw();
+
     player1.update();
     player2.update();
 
     player1.draw();
     player2.draw();
 
+    // Update bullets
     for (int i = bullets.size() - 1; i >= 0; i--) {
       Bullet b = bullets.get(i);
       b.update();
       b.draw();
 
       if (b.hits(player1)) {
-        gameOver = true;
-        winner = "Player 2 Wins!";
+        player1.health--;
+        bullets.remove(i);
+        if (player1.health <= 0) {
+          gameOver = true;
+          winner = "Player 2 Wins!";
+        }
       } else if (b.hits(player2)) {
-        gameOver = true;
-        winner = "Player 1 Wins!";
+        player2.health--;
+        bullets.remove(i);
+        if (player2.health <= 0) {
+          gameOver = true;
+          winner = "Player 1 Wins!";
+        }
+      } else if (b.isOffScreen()) {
+        bullets.remove(i);
       }
-
-      if (b.isOffScreen()) bullets.remove(i);
     }
 
-    drawAmmoHUD();
+    drawHUD();
   }
 }
 
 void drawStartScreen() {
   fill(255);
   textSize(24);
-  text("Terry's Tank Trouble Battle", width / 2, height / 2 - 60);
+  text("🚀 Tank Trouble Battle 🚀", width / 2, height / 2 - 60);
   text("Player 1: WASD + 1 to shoot", width / 2, height / 2 - 20);
   text("Player 2: Arrows + P to shoot", width / 2, height / 2 + 20);
   text("Press SPACE to start", width / 2, height / 2 + 80);
@@ -68,17 +78,22 @@ void drawEndScreen() {
   text("Press R to restart", width / 2, height / 2 + 50);
 }
 
-void drawAmmoHUD() {
+void drawHUD() {
   fill(255);
-  text("Ammo: " + player1.ammo, 80, 20);
-  text("Ammo: " + player2.ammo, width - 80, 20);
+  textAlign(LEFT);
+  text("Ammo: " + player1.ammo, 20, 20);
+  text("HP: " + player1.health, 20, 50);
+
+  textAlign(RIGHT);
+  text("Ammo: " + player2.ammo, width - 20, 20);
+  text("HP: " + player2.health, width - 20, 50);
 }
 
 void keyPressed() {
   if (!gameStarted && key == ' ') {
     gameStarted = true;
   } else if (gameOver && (key == 'r' || key == 'R')) {
-    setup(); // Restart game
+    setup(); // restart the game
     gameStarted = true;
     gameOver = false;
     winner = "";
