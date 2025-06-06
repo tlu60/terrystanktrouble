@@ -4,11 +4,13 @@ class Bullet {
   float speed = 6;
   float radius = 6;
   int bulletColor;
+  Tank shooter;
 
-  Bullet(PVector startPos, PVector dir, int c) {
+  Bullet(PVector startPos, PVector dir, int c, Tank shooter) {
     pos = startPos.copy();
     vel = dir.copy().normalize().mult(speed);
     bulletColor = c;
+    this.shooter = shooter;
   }
 
   void update() {
@@ -22,6 +24,7 @@ class Bullet {
   }
 
   boolean hits(Tank t) {
+    if (t == shooter) return false;
     return dist(pos.x, pos.y, t.pos.x, t.pos.y) < t.size / 2;
   }
 
