@@ -1,20 +1,19 @@
-class Wall {
-  PVector position;
-  PVector size;
-  boolean isDestructible;
 
-  Wall(PVector position, PVector size, boolean isDestructible) {
-    this.position = position;
+class Wall {
+  PVector pos, size;
+
+  Wall(PVector pos, PVector size) {
+    this.pos = pos;
     this.size = size;
-    this.isDestructible = isDestructible;
   }
 
   void draw() {
-    if (isDestructible) {
-      fill(0); // Red for destructible
-    } else {
-      fill(100);       // Gray for solid walls
-    }
-    rect(position.x, position.y, size.x, size.y);
+    fill(150);
+    rect(pos.x, pos.y, size.x, size.y);
+  }
+
+  boolean contains(PVector p) {
+    return p.x > pos.x && p.x < pos.x + size.x &&
+           p.y > pos.y && p.y < pos.y + size.y;
   }
 }

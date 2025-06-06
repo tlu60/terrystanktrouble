@@ -1,18 +1,7 @@
 class Tank {
-  PVector pos;
-  PVector vel;
-  PVector acc;
-  PVector dir;
-
-  float maxSpeed = 3;
-  float accelRate = 0.4;
-  float friction = 0.9;
-
-  int ammo = 3;
-  int maxAmmo = 3;
-  int reloadTime = 60;
-  int reloadCounter = 0;
-
+  PVector pos, vel, acc, dir;
+  float maxSpeed = 3, accelRate = 0.4, friction = 0.9;
+  int ammo = 3, maxAmmo = 3, reloadTime = 60, reloadCounter = 0;
   float size = 30;
   int tankColor;
   int health = 3;
@@ -21,7 +10,7 @@ class Tank {
     this.pos = startPos.copy();
     this.vel = new PVector(0, 0);
     this.acc = new PVector(0, 0);
-    this.dir = new PVector(1, 0); // Default facing
+    this.dir = new PVector(1, 0);
     this.tankColor = tankColor;
   }
 
@@ -31,7 +20,7 @@ class Tank {
   }
 
   void handleMovement() {
-    acc.set(0, 0); // Reset acceleration
+    acc.set(0, 0);
 
     if (this == player1) {
       if (keyPressed) {
@@ -52,16 +41,20 @@ class Tank {
     vel.add(acc);
     vel.mult(friction);
 
-    // Clamp to max speed
     if (vel.mag() > maxSpeed) {
       vel.setMag(maxSpeed);
     }
 
     if (vel.mag() > 0.1) {
-      dir = vel.copy().normalize(); // Update facing direction
+      dir = vel.copy().normalize();
     }
 
-    pos.add(vel);
+    PVector nextPos = pos.copy().add(vel);
+    if (!map.checkWallCollision(nextPos)) {
+      pos = nextPos;
+    } else {
+      vel.mult(0); // stop movement if wall hit
+    }
   }
 
   void reload() {
@@ -81,7 +74,7 @@ class Tank {
   Bullet shoot() {
     ammo--;
     PVector bulletStart = pos.copy().add(dir.copy().mult(size / 2 + 6));
-    return new Bullet(bulletStart, dir.copy(), tankColor, this);
+    return new Bullet(bulletStart, dir.copy().mult(5), tankColor, this);
   }
 
   void draw() {
@@ -92,7 +85,7 @@ class Tank {
     rectMode(CENTER);
     rect(0, 0, size, size);
     fill(255);
-    rect(size / 2, 0, size / 2, 5); // cannon
+    rect(size / 2, 0, size / 2, 5);
     popMatrix();
   }
 }
