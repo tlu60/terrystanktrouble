@@ -8,10 +8,10 @@ String winner = "";
 
 void setup() {
   size(800, 600);
-  map = new GameMap();
   bullets = new ArrayList<Bullet>();
-  player1 = new Tank(new PVector(100, 100), color(0, 150, 255));
-  player2 = new Tank(new PVector(700, 500), color(255, 100, 0));
+  player1 = new Tank(new PVector(100, 150), color(0, 150, 255));
+  player2 = new Tank(new PVector(700, 450), color(255, 100, 0));
+  map = new GameMap();
   textAlign(CENTER, CENTER);
   textSize(20);
 }
@@ -36,8 +36,8 @@ void draw() {
     for (int i = bullets.size() - 1; i >= 0; i--) {
       Bullet b = bullets.get(i);
       b.update();
-      b.draw();
 
+      // Check collisions
       if (b.hits(player1)) {
         player1.health--;
         bullets.remove(i);
@@ -52,8 +52,12 @@ void draw() {
           gameOver = true;
           winner = "Player 1 Wins!";
         }
+      } else if (map.checkWallCollision(b.pos)) {
+        bullets.remove(i);
       } else if (b.isOffScreen()) {
         bullets.remove(i);
+      } else {
+        b.draw();
       }
     }
 
@@ -64,7 +68,7 @@ void draw() {
 void drawStartScreen() {
   fill(255);
   textSize(24);
-  text("🚀 Tank Trouble Battle 🚀", width / 2, height / 2 - 60);
+  text("🚀 Terry's Tank Battle 🚀", width / 2, height / 2 - 60);
   text("Player 1: WASD + 1 to shoot", width / 2, height / 2 - 20);
   text("Player 2: Arrows + P to shoot", width / 2, height / 2 + 20);
   text("Press SPACE to start", width / 2, height / 2 + 80);
@@ -79,32 +83,59 @@ void drawEndScreen() {
 }
 
 void drawHUD() {
+  int barWidth = 100;
+  int barHeight = 15;
+
+  // Background bar zone
+  fill(30);
+  rect(0, 0, width, 70); // top bar UI background
+
+  // === Player 1 UI (left) ===
   fill(255);
   textAlign(LEFT);
   text("Ammo: " + player1.ammo, 20, 20);
-  text("HP: " + player1.health, 20, 50);
+  text("Health:", 20, 45);
 
+  float healthRatio1 = player1.health / 3.0;
+  fill(255, 0, 0);
+  rect(90, 38, barWidth, barHeight);
+  fill(0, 255, 0);
+  rect(90, 38, barWidth * healthRatio1, barHeight);
+  noFill();
+  stroke(255);
+  rect(90, 38, barWidth, barHeight);
+  noStroke();
+
+  // === Player 2 UI (right) ===
+  fill(255);
   textAlign(RIGHT);
   text("Ammo: " + player2.ammo, width - 20, 20);
-  text("HP: " + player2.health, width - 20, 50);
+  text("Health:", width - 20 - barWidth - 70, 45);
+
+  float healthRatio2 = player2.health / 3.0;
+  fill(255, 0, 0);
+  rect(width - 120, 38, barWidth, barHeight);
+  fill(0, 255, 0);
+  rect(width - 120, 38, barWidth * healthRatio2, barHeight);
+  noFill();
+  stroke(255);
+  rect(width - 120, 38, barWidth, barHeight);
+  noStroke();
 }
 
 void keyPressed() {
   if (!gameStarted && key == ' ') {
     gameStarted = true;
   } else if (gameOver && (key == 'r' || key == 'R')) {
-    setup(); // restart the game
+    setup();
     gameStarted = true;
     gameOver = false;
     winner = "";
   }
 
-  // Player 1 shoot
   if (key == '1' && player1.canShoot()) {
     bullets.add(player1.shoot());
   }
-
-  // Player 2 shoot
   if ((key == 'p' || key == 'P') && player2.canShoot()) {
     bullets.add(player2.shoot());
   }
