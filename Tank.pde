@@ -4,10 +4,11 @@ class Tank {
   float speed = 2.5;
   int ammo = 3;
   int maxAmmo = 3;
-  int reloadTime = 60; // frames
+  int reloadTime = 60;
   int reloadCounter = 0;
   float size = 30;
   int tankColor;
+  int health = 3;
 
   Tank(PVector startPos, int tankColor) {
     this.pos = startPos.copy();
@@ -75,7 +76,8 @@ class Tank {
 
   Bullet shoot() {
     ammo--;
-    return new Bullet(pos.copy(), dir.copy(), tankColor);
+    // Start bullet a little ahead to avoid self-collision
+    PVector start = pos.copy().add(dir.copy().mult(size / 2 + 6));
+    return new Bullet(start, dir.copy(), tankColor, this);
   }
 }
-
