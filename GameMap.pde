@@ -1,6 +1,5 @@
 class GameMap {
   ArrayList<Wall> walls;
-  int uiMargin = 70;
 
   GameMap() {
     walls = new ArrayList<Wall>();
@@ -8,30 +7,34 @@ class GameMap {
   }
 
   void generateWalls() {
-    walls.clear();
+    float thickness = 20;
 
-    // Border walls
-    walls.add(new Wall(new PVector(0, uiMargin), new PVector(width, 10))); // top
-    walls.add(new Wall(new PVector(0, height - 10), new PVector(width, 10))); // bottom
-    walls.add(new Wall(new PVector(0, uiMargin), new PVector(10, height - uiMargin - 10))); // left
-    walls.add(new Wall(new PVector(width - 10, uiMargin), new PVector(10, height - uiMargin - 10))); // right
+    // Outer perimeter
+    walls.add(new Wall(0, 0, width, thickness));
+    walls.add(new Wall(0, height - thickness, width, thickness));
+    walls.add(new Wall(0, 0, thickness, height));
+    walls.add(new Wall(width - thickness, 0, thickness, height));
 
-    // Symmetrical interior walls
-    walls.add(new Wall(new PVector(width/2 - 100, height/2 - 60), new PVector(200, 10)));
-    walls.add(new Wall(new PVector(width/2 - 10, height/2 - 100), new PVector(10, 80)));
-    walls.add(new Wall(new PVector(width/2 - 10, height/2 + 20), new PVector(10, 80)));
-    walls.add(new Wall(new PVector(width/2 - 100, height/2 + 60), new PVector(200, 10)));
+    // Inner symmetrical walls
+    float w = 100;
+    float h = 20;
+    walls.add(new Wall(width/2 - w/2, height/2 - 100, w, h));
+    walls.add(new Wall(width/2 - w/2, height/2 + 100, w, h));
+    walls.add(new Wall(width/2 - 200, height/2 - h/2, h, w));
+    walls.add(new Wall(width/2 + 200 - h, height/2 - h/2, h, w));
   }
 
   void draw() {
-    for (Wall w : walls) {
-      w.draw();
+    for (Wall wall : walls) {
+      wall.draw();
     }
   }
 
-  boolean checkWallCollision(PVector pos) {
-    for (Wall w : walls) {
-      if (w.contains(pos)) return true;
+  boolean collidesWithWall(PVector pos, float radius) {
+    for (Wall wall : walls) {
+      if (wall.collides(pos, radius)) {
+        return true;
+      }
     }
     return false;
   }
