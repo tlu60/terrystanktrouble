@@ -1,19 +1,24 @@
-
 class Wall {
-  PVector pos, size;
+  float x, y, w, h;
 
-  Wall(PVector pos, PVector size) {
-    this.pos = pos;
-    this.size = size;
+  Wall(float x, float y, float w, float h) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
   }
 
   void draw() {
-    fill(150);
-    rect(pos.x, pos.y, size.x, size.y);
+    fill(150);  // grey walls
+    noStroke();
+    rect(x, y, w, h);
   }
 
-  boolean contains(PVector p) {
-    return p.x > pos.x && p.x < pos.x + size.x &&
-           p.y > pos.y && p.y < pos.y + size.y;
+  boolean collides(PVector pos, float radius) {
+    float closestX = constrain(pos.x, x, x + w);
+    float closestY = constrain(pos.y, y, y + h);
+    float dx = pos.x - closestX;
+    float dy = pos.y - closestY;
+    return dx * dx + dy * dy < radius * radius;
   }
 }
