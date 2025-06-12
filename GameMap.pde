@@ -3,25 +3,43 @@ class GameMap {
 
   GameMap() {
     walls = new ArrayList<Wall>();
-    generateWalls();
-  }
 
-  void generateWalls() {
-    float thickness = 20;
+    float thin = 20;
+    float longH = 150;
+    float shortH = 80;
+    float gap = 100;
 
-    // Outer perimeter
-    walls.add(new Wall(0, 0, width, thickness));
-    walls.add(new Wall(0, height - thickness, width, thickness));
-    walls.add(new Wall(0, 0, thickness, height));
-    walls.add(new Wall(width - thickness, 0, thickness, height));
+    float cx = width / 2;
+    float cy = height / 2;
 
-    // Inner symmetrical walls
-    float w = 100;
-    float h = 20;
-    walls.add(new Wall(width/2 - w/2, height/2 - 100, w, h));
-    walls.add(new Wall(width/2 - w/2, height/2 + 100, w, h));
-    walls.add(new Wall(width/2 - 200, height/2 - h/2, h, w));
-    walls.add(new Wall(width/2 + 200 - h, height/2 - h/2, h, w));
+    // Perimeter walls
+    walls.add(new Wall(0, thin / 2, width * 2, thin));
+    walls.add(new Wall(0, height - thin / 2, width * 2, thin));
+    walls.add(new Wall(thin / 2, 0, thin, height * 2));
+    walls.add(new Wall(width - thin / 2, 0, thin, height * 2));
+
+    // Central vertical corridor
+    walls.add(new Wall(cx, cy - gap, thin, longH));
+    walls.add(new Wall(cx, cy + gap, thin, longH));
+
+    // Horizontal T walls left and right
+    walls.add(new Wall(cx - 150, cy - gap, 100, thin));
+    walls.add(new Wall(cx + 150, cy + gap, 100, thin));
+
+    // Middle horizontal line
+    walls.add(new Wall(cx, cy, 200, thin));
+
+    // Side blocks - symmetrical
+    walls.add(new Wall(cx - 300, cy - 200, thin, shortH));
+    walls.add(new Wall(cx + 300, cy - 200, thin, shortH));
+    walls.add(new Wall(cx - 300, cy + 200, thin, shortH));
+    walls.add(new Wall(cx + 300, cy + 200, thin, shortH));
+
+    // Additional side walls for interesting movement
+    walls.add(new Wall(cx - 200, cy, 100, thin));
+    walls.add(new Wall(cx + 200, cy, 100, thin));
+    walls.add(new Wall(cx - 100, cy + 150, thin, 100));
+    walls.add(new Wall(cx + 100, cy - 150, thin, 100));
   }
 
   void draw() {
@@ -30,9 +48,9 @@ class GameMap {
     }
   }
 
-  boolean collidesWithWall(PVector pos, float radius) {
+  boolean collidesWithWalls(float x, float y, float w, float h) {
     for (Wall wall : walls) {
-      if (wall.collides(pos, radius)) {
+      if (wall.collides(x, y, w, h)) {
         return true;
       }
     }
