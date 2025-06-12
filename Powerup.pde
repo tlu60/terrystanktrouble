@@ -1,24 +1,26 @@
 class PowerUp {
+  PVector pos;
   PowerUpType type;
-  float duration = 10.0;
-  float activeTime;
-  boolean isActive;
+  float duration = 10 * 60; // 10 seconds
+  boolean isActive = true;
 
-  PowerUp(PowerUpType type) {
+  PowerUp(PVector pos, PowerUpType type) {
+    this.pos = pos;
     this.type = type;
-    this.activeTime = 0;
-    this.isActive = false;
   }
 
-
+  void apply(Tank t) {
+    // Implementation based on power up type
+  }
 
   void update() {
-    if (isActive) {
-      activeTime += 1 / frameRate;
-      if (activeTime > duration) {
-        isActive = false;
-        // Optionally remove effect from tank
-      }
-    }
+    duration--;
+    if (duration <= 0) isActive = false;
+  }
+
+  void draw() {
+    if (!isActive) return;
+    fill(0, 255, 255);
+    ellipse(pos.x, pos.y, 15, 15);
   }
 }
