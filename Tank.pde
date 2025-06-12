@@ -1,91 +1,102 @@
 class Tank {
-  PVector pos, vel, acc, dir;
-  float maxSpeed = 3, accelRate = 0.4, friction = 0.9;
-  int ammo = 3, maxAmmo = 3, reloadTime = 60, reloadCounter = 0;
-  float size = 30;
-  int tankColor;
+  PVector pos, vel;
+  float angle;
+  float maxSpeed = 3;
+  float acceleration = 0.2;
+  float friction = 0.05;
+  float radius = 20;
+
+  int ammo = 3;
+  int maxAmmo = 3;
   int health = 3;
+  int reloadCounter = 0;
+  int reloadDelay = 60;
 
-  Tank(PVector startPos, int tankColor) {
-    this.pos = startPos.copy();
-    this.vel = new PVector(0, 0);
-    this.acc = new PVector(0, 0);
-    this.dir = new PVector(1, 0);
-    this.tankColor = tankColor;
-  }
+  int col;
+  GameMap map;
 
-  void update() {
-    handleMovement();
-    reload();
+  Tank(float x, float y, int col, GameMap map) {
+    this.pos = new PVector(x, y);
+    this.vel = new PVector();
+    this.col = col;
+    this.map = map;
   }
 
   void handleMovement() {
-    acc.set(0, 0);
-
+    PVector input = new PVector();
     if (this == player1) {
-      if (keyPressed) {
-        if (key == 'w') acc.y -= accelRate;
-        if (key == 's') acc.y += accelRate;
-        if (key == 'a') acc.x -= accelRate;
-        if (key == 'd') acc.x += accelRate;
-      }
-    } else if (this == player2) {
-      if (keyPressed) {
-        if (keyCode == UP) acc.y -= accelRate;
-        if (keyCode == DOWN) acc.y += accelRate;
-        if (keyCode == LEFT) acc.x -= accelRate;
-        if (keyCode == RIGHT) acc.x += accelRate;
-      }
-    }
-
-    vel.add(acc);
-    vel.mult(friction);
-
-    if (vel.mag() > maxSpeed) {
-      vel.setMag(maxSpeed);
-    }
-
-    if (vel.mag() > 0.1) {
-      dir = vel.copy().normalize();
-    }
-
-    PVector nextPos = pos.copy().add(vel);
-    if (!map.checkWallCollision(nextPos)) {
-      pos = nextPos;
+      if (wPressed) input.y -= 1;
+      if (sPressed) input.y += 1;
+      if (aPressed) input.x -= 1;
+      if (dPressed) input.x += 1;
     } else {
-      vel.mult(0); // stop movement if wall hit
+      if (upPressed) input.y -= 1;
+      if (downPressed) input.y += 1;
+      if (leftPressed) input.x -= 1;
+      if (rightPressed) input.x += 1;
     }
+
+    if (input.magSq() > 0) {
+      input.normalize().mult(acceleration);
+      vel.add(input);
+      angle = atan2(input.y, input.x);
+    }
+
+    vel.mult(1 - friction);
+    vel.limit(maxSpeed);
+
+    PVector nextPos = PVector.add(pos, vel);
+    if (!map.collidesWithWall(nextPos, radius)) {
+      pos.set(nextPos);
+    }
+
+    reload();
   }
 
-  void reload() {
-    if (ammo < maxAmmo) {
-      reloadCounter++;
-      if (reloadCounter >= reloadTime) {
-        ammo++;
-        reloadCounter = 0;
-      }
+  void update() {
+    drawTank();
+  }
+
+  void drawTank() {
+    pushMatrix();
+    translate(pos.x, pos.y);
+    rotate(angle);
+    fill(col);
+    stroke(0);
+    strokeWeight(1);
+    ellipse(0, 0, radius * 2, radius * 2);
+    rect(radius / 2, -5, 15, 10);  // cannon
+    popMatrix();
+  }
+
+  Bullet shoot() {
+    if (ammo > 0) {
+      ammo--;
+      PVector dir = PVector.fromAngle(angle).mult(5);
+      return new Bullet(pos.copy(), dir, this);
     }
+    return null;
   }
 
   boolean canShoot() {
     return ammo > 0;
   }
 
-  Bullet shoot() {
-    ammo--;
-    PVector bulletStart = pos.copy().add(dir.copy().mult(size / 2 + 6));
-    return new Bullet(bulletStart, dir.copy().mult(5), tankColor, this);
+  void reload() {
+    if (ammo < maxAmmo) {
+      reloadCounter++;
+      if (reloadCounter >= reloadDelay) {
+        ammo++;
+        reloadCounter = 0;
+      }
+    }
   }
 
-  void draw() {
-    pushMatrix();
-    translate(pos.x, pos.y);
-    rotate(dir.heading());
-    fill(tankColor);
-    rectMode(CENTER);
-    rect(0, 0, size, size);
-    fill(255);
-    rect(size / 2, 0, size / 2, 5);
-    popMatrix();
+  void takeDamage() {
+    health--;
+  }
+
+  boolean isDead() {
+    return health <= 0;
   }
 }
