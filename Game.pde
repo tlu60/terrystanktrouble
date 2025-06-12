@@ -1,4 +1,4 @@
-import processing.sound.*;
+//import processing.sound.*;
 
 GameMap map;
 Tank player1, player2;
@@ -8,9 +8,9 @@ String state = "START";
 PFont font;
 
 // Sound effects
-SoundFile shootSound;
-SoundFile hitSound;
-SoundFile gameOverSound;
+//SoundFile shootSound;
+//SoundFile hitSound;
+//SoundFile gameOverSound;
 
 boolean wPressed, aPressed, sPressed, dPressed;
 boolean upPressed, downPressed, leftPressed, rightPressed;
@@ -22,9 +22,9 @@ void setup() {
   font = createFont("Arial", 16);
   textFont(font);
 
-  shootSound = new SoundFile(this, "shoot.wav");
-  hitSound = new SoundFile(this, "hit.wav");
-  gameOverSound = new SoundFile(this, "gameover.wav");
+  //shootSound = new SoundFile(this, "shoot.wav");
+ //hitSound = new SoundFile(this, "hit.wav");
+  //gameOverSound = new SoundFile(this, "gameover.wav");
 
   setupPlayers();
 }
@@ -79,7 +79,7 @@ void keyPressed() {
     Bullet b = player1.shoot();
     if (b != null) {
       bullets.add(b);
-      shootSound.play();
+//shootSound.play();
     }
   }
 
@@ -87,7 +87,7 @@ void keyPressed() {
     Bullet b = player2.shoot();
     if (b != null) {
       bullets.add(b);
-      shootSound.play();
+      //shootSound.play();
     }
   }
 
@@ -122,11 +122,11 @@ void updateGame() {
     if (b.checkCollision(player1) && !player1.isDead() && b.shooter != player1) {
       player1.takeDamage();
       bullets.remove(i);
-      hitSound.play();
+      //hitSound.play();
     } else if (b.checkCollision(player2) && !player2.isDead() && b.shooter != player2) {
       player2.takeDamage();
       bullets.remove(i);
-      hitSound.play();
+      //hitSound.play();
     } else if (b.isOutOfBounds()) {
       bullets.remove(i);
     }
@@ -134,7 +134,7 @@ void updateGame() {
 
   if (player1.isDead() || player2.isDead()) {
     state = "GAMEOVER";
-    gameOverSound.play();
+    //gameOverSound.play();
   }
 }
 
